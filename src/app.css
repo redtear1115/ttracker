@@ -1,0 +1,13 @@
+:root {
+  color-scheme: dark;
+  --bg: #101418;
+  --card: #1a2027;
+  --text: #e8edf2;
+  --muted: #8a949e;
+  --accent: #ffc53d;   /* 垃圾車黃 */
+  --recycle: #4cc38a;
+  --danger: #ff6369;
+  font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
