@@ -12,6 +12,7 @@
     "fetch-points": "tsx scripts/fetch-points.ts"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260712.1",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tsconfig/svelte": "^5.0.8",
     "@types/leaflet": "^1.9.21",
