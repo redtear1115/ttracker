@@ -17,7 +17,9 @@
   {:else if view === 'search'}
     <SearchView />
   {:else}
-    <p class="empty">地圖（下個 task 實作）</p>
+    {#await import('./views/MapView.svelte') then { default: MapView }}
+      <MapView />
+    {/await}
   {/if}
 </main>
 
