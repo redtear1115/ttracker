@@ -19,18 +19,21 @@
 
 | 資料 | 來源 | 取用方式 |
 |---|---|---|
-| 清運點靜態資料 | 臺南市政府資料開放平台「臺南市垃圾清運點資料」（resource id `84df8cd6-8741-41ed-919c-5105a28ecd6d`） | build 時打包，手動腳本更新 |
-| 垃圾車 GPS 即時位置 | 同平台「臺南市垃圾車GPS資料」；官方查詢系統 clean.tnepb.gov.tw 使用同源資料 | Cloudflare Worker 代理，前端輪詢 |
+| 清運點靜態資料 | 臺南市政府資料開放平台「臺南市垃圾清運點資料」，下載端點 `https://data.tainan.gov.tw/Resource/84df8cd6-8741-41ed-919c-5105a28ecd6d?handler=GoJson` | build 時打包，手動腳本更新 |
+| 垃圾車 GPS 即時位置 | 官方查詢系統 `POST https://clean.tnepb.gov.tw/WebService/WsSkyeyes.asmx/NewgetCarsinfo` | Cloudflare Pages Function 代理，前端輪詢 |
 
-清運點欄位：AREA（行政區）、ROUTEID（清運路線編號）、ROUTEORDER（清運次序）、VILLAGE（里別）、POINTNAME（清運點名稱）、TIME（清運時間）、LONGITUDE/LATITUDE（座標）、WORDDAY（收運日，如「一、二、四、六」）、RECYCLEDAY（資源回收日）。全市約 3,000+ 點。
+清運點欄位：AREA（行政區）、ROUTEID（清運路線編號）、ROUTEORDER（清運次序）、VILLAGE（里別）、POINTNAME（清運點名稱）、TIME（清運時間）、LONGITUDE/LATITUDE（座標）、WORKDAY（收運日，如「一、二、四、六」，另有「無清運」值；平台文件誤植為 WORDDAY，實際資料為 WORKDAY）、RECYCLEDAY（資源回收日）。實測全市 14,194 點、36 行政區、370 條路線（route 以 AREA+ROUTEID 為鍵，ROUTEID 跨區重複）；TIME 為 `HH:MM`，少數為 null；約 10 筆缺座標。
 
-GPS 欄位：AREA、ROUTENAME、CARNO（車號）、GPSTIME（回傳時間）、LONGITUDE/LATITUDE。
+GPS 即時 API（已實測打通）：
+- 請求：`POST /WebService/WsSkyeyes.asmx/NewgetCarsinfo`、`Content-Type: application/json`、body `{}`、**必須帶 `Referer: https://clean.tnepb.gov.tw/GarbageTruckLiveFeed`**（唯一的存取條件，不需 cookie）。
+- 回應：`{"d": "<JSON字串>"}`，內層 `DATA[]` 每車：`car_licence`（車牌）、`caption`（目前位置文字描述）、`dt`（回傳時間，台北時間 `YYYY-MM-DD HH:mm:ss`）、`x`/`y`（經度/緯度，字串）、`direct`（方向箭頭）、`status`、`cartype`、`car_id`、`rcar_licence`（代班車牌）。
+- 官方前端每 20 秒刷新一次，本專案輪詢 15 秒、代理快取 10 秒是安全範圍。
 
-**已驗證的限制：**
+**已驗證的事實與限制：**
 
-- 政府 API 回應**無 CORS header**，瀏覽器不能直接抽 → 靜態資料 build 時打包、即時資料走 Worker 代理。
-- 平台改版過，`?handler=GoJson` 下載端點回傳的 JSON 是 HTML-escaped 嵌在頁面裡；更新腳本需處理 unescape，或實作時另找乾淨的 raw 端點。
-- **GPS 資料集在新版平台的確切端點尚未確認**（資料集確定存在）。這是實作計畫的第一個任務；若開放端點不可得，fallback 為 Worker 改抽官方查詢系統的同源資料。
+- 政府 API 回應**無可用的瀏覽器直接存取路徑**：開放資料平台無 CORS header；WsSkyeyes 雖有 `Access-Control-Allow-Origin: *` 但要求特定 Referer，瀏覽器 fetch 無法偽造 Referer → 仍需代理。
+- 清運點 `?handler=GoJson` 端點回傳的 JSON 是 HTML-escaped 嵌在 ~20MB 頁面裡；更新腳本需抽出並 unescape。
+- **GPS feed 沒有路線欄位** → 車輛與最愛點的路線對應採**地理匹配**：取最愛點所屬路線的全部清運點，找距路線任一點 500m 內的車，取最近者；車輛對到的最近點 `routeOrder` 與最愛點比較得出「還差 N 站」。
 - 國定假日停收公告不在開放資料內，app 不處理（明列為已知限制）。
 
 ## 架構
@@ -38,14 +41,15 @@ GPS 欄位：AREA、ROUTENAME、CARNO（車號）、GPSTIME（回傳時間）、
 ```
 ttracker/
 ├── src/              Svelte 5 + Vite + TypeScript PWA 前端
-├── worker/           Cloudflare Worker：GPS 代理（~30 行，10 秒快取）
+├── functions/api/    Cloudflare Pages Functions：gps.ts 代理（帶 Referer 轉發，10 秒快取）
 ├── scripts/          fetch-points.ts：抓清運點資料 → 正規化 → data/points.json
 ├── data/points.json  打包進 app 的靜態清運點資料（進版控）
 └── docs/             規格與計畫
 ```
 
-- 部署 Cloudflare Pages；Worker 掛同專案 `/api/gps` 路由 → 前端同源請求，零 CORS 問題。
-- Worker 對上游加 10 秒快取（`caches.default` 或記憶體 TTL），多裝置同開也只有極少量上游請求。
+- 部署 Cloudflare Pages；GPS 代理用同 repo 的 **Pages Function**（`functions/api/gps.ts`）→ 前端同源請求 `/api/gps`，零 CORS 問題、零額外部署流程。
+- 代理對上游加 10 秒快取，多裝置同開也只有極少量上游請求。
+- 本地開發：Vite dev server 以 proxy 設定把 `/api/gps` 直轉上游（自動補 Referer），不需跑 wrangler 也能開發。
 - 技術選型：Svelte 5、Vite、TypeScript、vite-plugin-pwa、Leaflet + OpenStreetMap、Vitest。最愛存 localStorage。
 
 ## 資料層設計
@@ -54,7 +58,7 @@ ttracker/
 
 ```ts
 interface CollectionPoint {
-  id: string;          // 穩定 id：`${routeId}-${routeOrder}`
+  id: string;          // 穩定 id：`${area}-${routeId}-${routeOrder}`（ROUTEID 跨行政區會重複，實測確認）
   area: string;        // 行政區
   routeId: string;
   routeOrder: number;
@@ -73,7 +77,7 @@ interface CollectionPoint {
 ### GPS 輪詢
 
 - app 前景時每 15 秒 GET `/api/gps`；`visibilitychange` 切背景即暫停，回前景立即刷新。
-- `GPSTIME` 距今超過 10 分鐘 → 該車視為「未發車／離線」，不顯示為即時。
+- 車輛 `dt`（台北時間）距今超過 10 分鐘 → 該車視為「未發車／離線」，不顯示為即時。
 
 ### 最愛
 
@@ -90,10 +94,11 @@ localStorage 存 `favoriteIds: string[]`。無同步、無帳號。
 - 今天是否回收日 → `recycleDays.includes(today)` 亮 ♻️ 標記。
 - 日期數學全部進 Vitest：跨日、跨週、當下正好等於班次時刻、workDays 為空等 edge case。
 
-### 車輛即時狀態
+### 車輛即時狀態（地理匹配）
 
-- 以最愛點的 `routeId` 從 GPS feed 找同路線車輛。
-- 車輛位置 → 對該路線所有清運點算最近點 → 取其 `routeOrder`，與最愛點的 `routeOrder` 相比 → 顯示「還差 N 站」／「已過站」。
+- GPS feed 無路線欄位，對應採地理匹配：取最愛點所屬 `routeId` 的全部清運點，對每台未過期車輛算「距該路線最近點」的距離（haversine）；距離 ≤ 500m 的車為候選，取最近者視為該路線的車。
+- 該車最近點的 `routeOrder` 與最愛點的 `routeOrder` 相比 → 顯示「還差 N 站」／「已過站」；同時顯示車輛 `caption`（官方的位置文字描述）與更新時間。
+- 匹配不到車 → 顯示「未發車或無法定位」，不猜。
 - **倒數以官方時刻表為準**；車輛位置是輔助訊號。第一版不做 ETA 預測——誠實顯示優於假精準。
 
 ## UI
@@ -125,8 +130,8 @@ localStorage 存 `favoriteIds: string[]`。無同步、無帳號。
 
 ## 測試策略
 
-- **Vitest 單元測試**：下一班計算、星期解析、車輛對站（routeOrder 比較）、GPSTIME 過期判斷。
-- Worker：本地以 wrangler dev 驗證代理與快取行為。
+- **Vitest 單元測試**：下一班計算、星期解析、上游回應解析（`{"d":"..."}` 雙層 JSON）、地理匹配與對站、`dt` 過期判斷。
+- Pages Function：邏輯抽成純函式進 Vitest；部署後以實機驗證。
 - UI 以手動驗證為主（自用工具，不做 E2E）。
 
 ## 已知限制（明列，不解）
