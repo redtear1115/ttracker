@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#101418"/>
+  <g fill="#f5c518">
+    <!-- cargo box -->
+    <rect x="96" y="176" width="176" height="128" rx="12"/>
+    <!-- cab -->
+    <path d="M272 224h72l56 56v24h-128z"/>
+    <!-- chassis / underbody -->
+    <rect x="96" y="304" width="304" height="28" rx="8"/>
+  </g>
+  <g fill="#101418">
+    <!-- window -->
+    <path d="M288 236h44l34 34h-78z"/>
+  </g>
+  <g fill="#e8e8e8">
+    <!-- wheels -->
+    <circle cx="168" cy="344" r="34"/>
+    <circle cx="352" cy="344" r="34"/>
+  </g>
+  <g fill="#101418">
+    <circle cx="168" cy="344" r="14"/>
+    <circle cx="352" cy="344" r="14"/>
+  </g>
+</svg>

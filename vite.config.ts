@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { VitePWA } from 'vite-plugin-pwa'
 
 const UPSTREAM = 'https://clean.tnepb.gov.tw/WebService/WsSkyeyes.asmx/NewgetCarsinfo'
 
@@ -32,6 +33,38 @@ function gpsDevProxy(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [svelte(), gpsDevProxy()],
+  plugins: [
+    svelte(),
+    gpsDevProxy(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      manifest: {
+        name: '台南垃圾車',
+        short_name: '垃圾車',
+        lang: 'zh-TW',
+        theme_color: '#101418',
+        background_color: '#101418',
+        display: 'standalone',
+        icons: [
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+        // 主 chunk 內嵌清運點資料，約 2.8MB，超過 workbox 預設 2MB 上限；放寬以便 shell + 時刻表可離線
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            urlPattern: /tile\.openstreetmap\.org/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'osm-tiles', expiration: { maxEntries: 200 } },
+          },
+        ],
+      },
+    }),
+  ],
   test: { environment: 'node' },
 })
