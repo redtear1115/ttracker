@@ -31,10 +31,10 @@ main {
 }
 .status-text { font-size: 0.8rem; color: var(--muted); }
 .refresh {
-  min-height: 36px;
-  padding: 6px 14px;
+  min-height: 44px;
+  padding: 6px 16px;
   border: 1px solid var(--muted);
-  border-radius: 18px;
+  border-radius: 22px;
   background: transparent;
   color: var(--text);
   font-size: 0.85rem;
