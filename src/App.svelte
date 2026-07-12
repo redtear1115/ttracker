@@ -1,5 +1,6 @@
 <script lang="ts">
   import HomeView from './views/HomeView.svelte'
+  import SearchView from './views/SearchView.svelte'
   import { gps } from './lib/gpsPoller.svelte'
   import { onMount } from 'svelte'
 
@@ -14,7 +15,7 @@
   {#if view === 'home'}
     <HomeView gotoSearch={() => (view = 'search')} />
   {:else if view === 'search'}
-    <p class="empty">搜尋（下個 task 實作）</p>
+    <SearchView />
   {:else}
     <p class="empty">地圖（下個 task 實作）</p>
   {/if}
