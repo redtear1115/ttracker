@@ -32,7 +32,7 @@
     for (const p of places.list) {
       L.circle([p.lat, p.lng], { radius: 500, color: '#ffc53d', weight: 1, fillOpacity: 0.05 }).addTo(placesLayer)
       L.marker([p.lat, p.lng], { icon: homeIcon })
-        .on('click', () => { selectedPlace = p; adding = false })
+        .on('click', () => { stopAdding(); selectedPlace = p })
         .addTo(placesLayer)
     }
   }
