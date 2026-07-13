@@ -1,3 +1,5 @@
+import type { CollectionPoint } from './types'
+
 export function isoDay(d: Date): number {
   return ((d.getDay() + 6) % 7) + 1
 }
@@ -20,4 +22,12 @@ export function minutesUntil(target: Date, now: Date): number {
 
 export function isRecycleDay(recycleDays: number[], now: Date): boolean {
   return recycleDays.includes(isoDay(now))
+}
+
+export function nextArrivalHasRecycle(
+  point: Pick<CollectionPoint, 'time' | 'workDays' | 'recycleDays'>,
+  now: Date,
+): boolean | null {
+  const at = nextArrival(point.time, point.workDays, now)
+  return at ? point.recycleDays.includes(isoDay(at)) : null
 }
