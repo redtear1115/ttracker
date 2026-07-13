@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { CollectionPoint } from '../lib/types'
-  import { nextArrival, minutesUntil, isRecycleDay } from '../lib/schedule'
+  import { nextArrival, minutesUntil, isRecycleDay, nextArrivalHasRecycle } from '../lib/schedule'
   import { matchTruckToPoint } from '../lib/trucks'
   import { routeKey, routePoints } from '../lib/points'
   import { gps } from '../lib/gpsPoller.svelte'
@@ -17,6 +17,7 @@
   const arrival = $derived(nextArrival(point.time, point.workDays, now))
   const mins = $derived(arrival ? minutesUntil(arrival, now) : null)
   const recycle = $derived(isRecycleDay(point.recycleDays, now))
+  const nextRecycle = $derived(nextArrivalHasRecycle(point, now))
   const match = $derived(matchTruckToPoint(point, routePoints(routeKey(point)), gps.trucks, now))
   const isToday = $derived(arrival != null && arrival.getDate() === now.getDate() && mins != null && mins < 24 * 60)
 
@@ -32,6 +33,7 @@
 
   {#if arrival && mins != null}
     <p class="countdown">
+      <span class="runicon" title={nextRecycle ? '這班有回收' : '這班只收垃圾'}>{nextRecycle ? '♻️' : '🚮'}</span>
       {#if isToday}
         <strong>{point.time}</strong>
         <span class="mins">剩 {mins >= 60 ? `${Math.floor(mins / 60)} 小時 ${mins % 60}` : mins} 分</span>

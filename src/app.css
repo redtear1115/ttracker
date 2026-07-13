@@ -84,6 +84,7 @@ main {
 .countdown strong { font-size: 2rem; font-weight: 700; letter-spacing: 0.02em; }
 .countdown .mins { color: var(--accent); font-size: 1rem; font-weight: 600; }
 .countdown.muted { color: var(--muted); font-size: 0.95rem; }
+.countdown .runicon { font-size: 1.2rem; }
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
 .badge {
