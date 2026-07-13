@@ -1,4 +1,5 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig } from 'vitest/config'
+import type { Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { VitePWA } from 'vite-plugin-pwa'
 
