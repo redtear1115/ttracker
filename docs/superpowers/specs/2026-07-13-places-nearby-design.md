@@ -12,7 +12,7 @@
 
 1. 新增地點：輸入名稱＋地址/地標搜尋定位，地圖上拖曳 marker 微調後儲存。
 2. 地圖顯示：每個地點 🏠 marker＋500m 半徑圈；點選某地點時，其圈內站點以 accent 色 `circleMarker`（radius 5）顯示，未選取時不畫（避免 14k 點全上地圖）。
-3. 點地點 marker → 最近 10 站列表：站名、下一班時刻、距離、🚮/♻️ 標記、☆ 一鍵加最愛；點列表項聚焦該站。
+3. 點地點 marker → 彈出**底部面板**（Svelte bottom sheet，非 Leaflet popup——☆ 互動需要 Svelte 響應性，也避免 HTML 字串插值）：最近 10 站列表，含站名、下一班時刻、距離、🚮/♻️ 標記、☆ 一鍵加最愛；點列表項聚焦該站。
 4. 🚮/♻️ 規則：站點「下一班」當天是回收日 → ♻️，否則 🚮。主畫面最愛卡片的「下次收運」行套用同一規則（今日回收標記維持不變）。
 5. 刪除地點：地點 popup 內提供刪除。改名不做（刪掉重加）。
 
@@ -30,7 +30,7 @@
 |---|---|---|
 | `src/lib/places.svelte.ts` | 地點 CRUD＋localStorage 持久化（比照 favorites 模式） | `places.list: Place[]`（$state）、`add(name, lat, lng)`、`remove(id)`；key `ttracker.places.v1`；`Place = { id: string; name: string; lat: number; lng: number }`，id 用 `crypto.randomUUID()` |
 | `src/lib/geocode.ts` | Nominatim 查詢 | `geocode(q: string): Promise<GeocodeResult[]>`；`GeocodeResult = { name: string; lat: number; lng: number }`；參數 `format=jsonv2&countrycodes=tw&limit=5&viewbox=119.9,23.5,120.7,22.7&bounded=1`；header `User-Agent` 不可設於瀏覽器 fetch（forbidden header）→ 靠預設 UA＋Referer 即可；錯誤/空結果擲回空陣列不拋 |
-| `src/lib/nearby.ts` | 臨近站點計算（純函式） | `nearbyStops(lat, lng, limit = 10, radiusM = 500): NearbyStop[]`；`NearbyStop = { point: CollectionPoint; distanceM: number }`；依距離排序；回傳圈內的最多 limit 點，**圈內不足 limit 時只回圈內的**（不硬湊） |
+| `src/lib/nearby.ts` | 臨近站點計算（純函式） | `nearbyStops(points: CollectionPoint[], lat, lng, limit = 10, radiusM = 500): NearbyStop[]`；`NearbyStop = { point: CollectionPoint; distanceM: number }`；依距離排序；回傳圈內的最多 limit 點，**圈內不足 limit 時只回圈內的**（不硬湊）；points 由呼叫端傳入（`allPoints`），純函式可用合成資料測試 |
 
 修改：
 
