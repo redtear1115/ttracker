@@ -3,6 +3,7 @@
   import { favorites } from '../lib/favorites.svelte'
   import { haversineMeters } from '../lib/geo'
   import type { CollectionPoint } from '../lib/types'
+  import Icon from '../components/Icon.svelte'
 
   let area = $state('')
   let routeKeySel = $state('')
@@ -35,7 +36,7 @@
 </script>
 
 <div class="search">
-  <button class="primary" onclick={findNearby}>📍 附近的清運點</button>
+  <button class="primary nearby" onclick={findNearby}><Icon name="map-pin" size={16} />附近的清運點</button>
   {#if geoError}<p class="muted">{geoError}</p>{/if}
 
   <div class="selectors">
@@ -57,10 +58,14 @@
           <strong>{p.name}</strong>
           <span class="muted">{p.area}・{p.village}・{p.time ?? '無時刻'}・路線 {p.routeId}</span>
         </div>
-        <button class="fav" class:on={favorites.has(p.id)} onclick={() => favorites.toggle(p.id)}>
-          {favorites.has(p.id) ? '★' : '☆'}
+        <button class="fav" class:on={favorites.has(p.id)} onclick={() => favorites.toggle(p.id)} aria-label={favorites.has(p.id) ? '移除最愛' : '加入最愛'}>
+          <Icon name="star" size={22} filled={favorites.has(p.id)} />
         </button>
       </li>
     {/each}
   </ul>
 </div>
+
+<style>
+  .nearby { display: inline-flex; align-items: center; justify-content: center; gap: 0.35em; }
+</style>

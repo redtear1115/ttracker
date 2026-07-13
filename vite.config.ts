@@ -43,8 +43,8 @@ export default defineConfig({
         name: '台南垃圾車',
         short_name: '垃圾車',
         lang: 'zh-TW',
-        theme_color: '#101418',
-        background_color: '#101418',
+        theme_color: '#0d1418',
+        background_color: '#0d1418',
         display: 'standalone',
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },

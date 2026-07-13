@@ -1,13 +1,37 @@
 :root {
-  color-scheme: dark;
-  --bg: #101418;
-  --card: #1a2027;
+  color-scheme: light dark;
+  --bg: #0d1418;
+  --card: #172228;
   --text: #e8edf2;
-  --muted: #8a949e;
-  --accent: #ffc53d;   /* 垃圾車黃 */
-  --recycle: #4cc38a;
-  --danger: #ff6369;
+  --muted: #9aa7b0;
+  --teal: #5fc4d4;     /* bureau-teal：互動色（按鈕、分頁、連結、焦點） */
+  --teal-ink: #062026; /* teal 底上的文字 */
+  --truck: #55d073;    /* 台南垃圾車綠：只用於「車」的訊號 */
+  --danger: #ff6b6e;
+  --hairline: rgba(255, 255, 255, 0.08);        /* 分隔線與邊框 */
+  --hairline-strong: rgba(255, 255, 255, 0.12); /* selectors/input 邊框 */
+  --press: rgba(255, 255, 255, 0.06);           /* :active 覆疊 */
+  --chip-bg: rgba(255, 255, 255, 0.06);         /* badge 底色 */
+  --truck-tint: rgba(85, 208, 115, 0.16);       /* badge.recycle 底色 */
   font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #eef4f5;        /* teal 微調的近白，日間公務色 */
+    --card: #ffffff;
+    --text: #16262e;
+    --muted: #52646e;
+    --teal: #1e7286;      /* 台南環保局官網日間 teal */
+    --teal-ink: #ffffff;  /* 淺色主題下 teal 按鈕用白字（5.5:1） */
+    --truck: #20713c;     /* truck-green 深端 */
+    --danger: #b3372e;
+    --hairline: rgba(0, 0, 0, 0.08);
+    --hairline-strong: rgba(0, 0, 0, 0.14);
+    --press: rgba(0, 0, 0, 0.05);
+    --chip-bg: rgba(0, 0, 0, 0.05);
+    --truck-tint: rgba(32, 113, 60, 0.12);
+  }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); -webkit-tap-highlight-color: transparent; }
@@ -39,7 +63,7 @@ main {
   color: var(--text);
   font-size: 0.85rem;
 }
-.refresh:active { background: rgba(255, 255, 255, 0.06); }
+.refresh:active { background: var(--press); }
 
 /* ---- favorite card ---- */
 .card {
@@ -50,8 +74,8 @@ main {
   margin-bottom: 16px;
 }
 .card.soon {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  border-color: var(--truck);
+  box-shadow: 0 0 0 1px var(--truck);
 }
 .card header {
   display: flex;
@@ -69,7 +93,7 @@ main {
   margin: -8px -8px 0 0;
   border: none;
   background: transparent;
-  color: var(--accent);
+  color: var(--truck);
   font-size: 1.4rem;
   line-height: 1;
 }
@@ -82,9 +106,11 @@ main {
   font-size: 1rem;
 }
 .countdown strong { font-size: 2rem; font-weight: 700; letter-spacing: 0.02em; }
-.countdown .mins { color: var(--accent); font-size: 1rem; font-weight: 600; }
+.countdown .mins { color: var(--truck); font-size: 1rem; font-weight: 600; }
 .countdown.muted { color: var(--muted); font-size: 0.95rem; }
-.countdown .runicon { font-size: 1.2rem; }
+.runicon { display: inline-flex; align-items: center; color: var(--muted); }
+.runicon.recycle { color: var(--truck); }
+.countdown .runicon { align-self: center; }
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
 .badge {
@@ -92,14 +118,16 @@ main {
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--chip-bg);
   color: var(--text);
 }
-.badge.recycle { background: rgba(76, 195, 138, 0.16); color: var(--recycle); }
+.badge.recycle { background: var(--truck-tint); color: var(--truck); }
 .badge.muted { color: var(--muted); }
 
 .truck { margin: 8px 0 0; font-size: 0.9rem; }
 .truck .muted, .muted { color: var(--muted); }
+.truck-signal { color: var(--truck); }
+.badge { display: inline-flex; align-items: center; gap: 0.3em; }
 
 /* ---- empty state ---- */
 .empty {
@@ -113,8 +141,8 @@ main {
   padding: 10px 20px;
   border: none;
   border-radius: 22px;
-  background: var(--accent);
-  color: #1a1200;
+  background: var(--teal);
+  color: var(--teal-ink);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -131,7 +159,7 @@ main {
   min-height: 44px;
   margin-bottom: 10px;
   padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--hairline-strong);
   border-radius: 8px;
   background: var(--card);
   color: var(--text);
@@ -152,7 +180,7 @@ main {
   gap: 8px;
   min-height: 44px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--hairline);
 }
 .pointlist li > div {
   flex: 1;
@@ -174,8 +202,8 @@ main {
   font-size: 1.5rem;
   line-height: 1;
 }
-.fav.on { color: var(--accent); }
-.fav:active { background: rgba(255, 255, 255, 0.06); border-radius: 8px; }
+.fav.on { color: var(--truck); }
+.fav:active { background: var(--press); border-radius: 8px; }
 
 /* ---- bottom tab bar ---- */
 .tabbar {
@@ -185,7 +213,7 @@ main {
   bottom: 0;
   display: flex;
   background: var(--card);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--hairline);
   padding-bottom: env(safe-area-inset-bottom);
 }
 .tabbar button {
@@ -196,8 +224,8 @@ main {
   color: var(--muted);
   font-size: 0.85rem;
 }
-.tabbar button.active { color: var(--accent); font-weight: 600; }
-.tabbar button:active { background: rgba(255, 255, 255, 0.04); }
+.tabbar button.active { color: var(--teal); font-weight: 600; }
+.tabbar button:active { background: var(--press); }
 
 /* ---- bottom sheet ---- */
 .sheet {
@@ -207,7 +235,7 @@ main {
   max-height: 45vh;
   overflow-y: auto;
   background: var(--card);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--hairline);
   border-radius: 16px 16px 0 0;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   z-index: 1000; /* Leaflet 地圖層之上 */
@@ -221,7 +249,7 @@ main {
 }
 .sheet-empty { padding: 16px 0; }
 .stoplist { list-style: none; margin: 8px 0 0; padding: 0; }
-.stoplist li { display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.stoplist li { display: flex; align-items: center; border-bottom: 1px solid var(--hairline); }
 .stop-main {
   flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0;
   min-height: 44px; padding: 8px 0; border: none; background: transparent;
@@ -233,10 +261,9 @@ main {
 .addform { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 .addform input {
   min-height: 44px; padding: 8px 12px; width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px;
+  border: 1px solid var(--hairline-strong); border-radius: 8px;
   background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.95rem;
 }
 .searchrow { display: flex; gap: 8px; }
 .searchrow input { flex: 1; }
 .hint { margin: 0; font-size: 0.8rem; }
-.place-icon { font-size: 24px; line-height: 1; background: none; border: none; }

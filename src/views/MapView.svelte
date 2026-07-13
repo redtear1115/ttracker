@@ -11,6 +11,8 @@
   import type { CollectionPoint } from '../lib/types'
   import PlacePanel from '../components/PlacePanel.svelte'
   import AddPlacePanel from '../components/AddPlacePanel.svelte'
+  import Icon from '../components/Icon.svelte'
+  import { truckMarkerHtml, starMarkerHtml, homeMarkerHtml, draftMarkerHtml } from '../lib/mapIcons'
 
   let el: HTMLDivElement
   let map: L.Map
@@ -22,15 +24,16 @@
   let highlightLayer = L.layerGroup()
   let draftMarker: L.Marker | null = null
 
-  const truckIcon = L.divIcon({ className: 'truck-icon', html: '🚛', iconSize: [28, 28] })
-  const starIcon = L.divIcon({ className: 'star-icon', html: '⭐', iconSize: [24, 24] })
-  const homeIcon = L.divIcon({ className: 'place-icon', html: '🏠', iconSize: [28, 28] })
-  const draftIcon = L.divIcon({ className: 'place-icon', html: '📍', iconSize: [32, 32] })
+  const truckIcon = L.divIcon({ className: 'marker-icon', html: truckMarkerHtml, iconSize: [28, 28], iconAnchor: [14, 14] })
+  const starIcon = L.divIcon({ className: 'marker-icon', html: starMarkerHtml, iconSize: [24, 24], iconAnchor: [12, 12] })
+  const homeIcon = L.divIcon({ className: 'marker-icon', html: homeMarkerHtml, iconSize: [28, 28], iconAnchor: [14, 14] })
+  const draftIcon = L.divIcon({ className: 'marker-icon', html: draftMarkerHtml, iconSize: [32, 32], iconAnchor: [16, 30] })
 
   function redrawPlaces(): void {
     placesLayer.clearLayers()
     for (const p of places.list) {
-      L.circle([p.lat, p.lng], { radius: 500, color: '#ffc53d', weight: 1, fillOpacity: 0.05 }).addTo(placesLayer)
+      // 地圖磚是淺色的：改用色階深端，亮色版（#5fc4d4/#55d073）留給深色 UI
+      L.circle([p.lat, p.lng], { radius: 500, color: '#2e7688', weight: 1, fillOpacity: 0.05 }).addTo(placesLayer)
       L.marker([p.lat, p.lng], { icon: homeIcon })
         .on('click', () => { stopAdding(); selectedPlace = p })
         .addTo(placesLayer)
@@ -88,7 +91,7 @@
       if (!routesDrawn.has(k)) {
         routesDrawn.add(k)
         for (const rp of routePoints(k))
-          L.circleMarker([rp.lat, rp.lng], { radius: 3, color: '#ffc53d', weight: 1 }).addTo(map)
+          L.circleMarker([rp.lat, rp.lng], { radius: 3, color: '#2e7688', weight: 1 }).addTo(map)
       }
     }
     if (bounds.length) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 })
@@ -117,7 +120,7 @@
     highlightLayer.clearLayers()
     if (!selectedPlace) return
     for (const s of nearbyStops(allPoints, selectedPlace.lat, selectedPlace.lng)) {
-      L.circleMarker([s.point.lat, s.point.lng], { radius: 5, color: '#ffc53d', weight: 2, fillOpacity: 0.6 })
+      L.circleMarker([s.point.lat, s.point.lng], { radius: 5, color: '#33a457', weight: 2, fillOpacity: 0.6 })
         .bindPopup(`${s.point.name}`)
         .addTo(highlightLayer)
     }
@@ -126,7 +129,7 @@
 
 <div class="map" bind:this={el}></div>
 
-<button class="addplace primary" onclick={startAdding}>＋ 地點</button>
+<button class="addplace primary" onclick={startAdding}><Icon name="plus" size={16} />地點</button>
 
 {#if adding}
   <AddPlacePanel onLocate={locateDraft} onSave={savePlace} onCancel={stopAdding} />
@@ -136,5 +139,6 @@
 
 <style>
   .map { position: fixed; inset: 0 0 56px 0; }
-  :global(.truck-icon), :global(.star-icon) { font-size: 22px; line-height: 1; background: none; border: none; }
+  .addplace { display: inline-flex; align-items: center; gap: 0.35em; }
+  :global(.marker-icon) { background: none; border: none; line-height: 0; }
 </style>
