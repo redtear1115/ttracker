@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T00:00:00+08:00",
+  "title": "Design System: ttracker",
+  "extensions": {
+    "colorMeta": {
+      "bureau-teal": {
+        "role": "primary",
+        "displayName": "環保局青 Bureau Teal",
+        "canonical": "#5fc4d4",
+        "tonalRamp": ["#06262c", "#0d3d47", "#175663", "#2e7688", "#3f9aad", "#5fc4d4", "#8fdbe6", "#c8eef4"]
+      },
+      "truck-green": {
+        "role": "secondary",
+        "displayName": "台南垃圾車綠 Truck Green",
+        "canonical": "#55d073",
+        "tonalRamp": ["#06240f", "#0d3a1c", "#16522b", "#20713c", "#33a457", "#55d073", "#8ce0a1", "#c5f0d1"]
+      },
+      "truck-green-deep": {
+        "role": "secondary",
+        "displayName": "台南垃圾車綠・深（淺色地圖磚用）",
+        "canonical": "#33a457",
+        "tonalRamp": ["#06240f", "#0d3a1c", "#16522b", "#20713c", "#33a457", "#55d073", "#8ce0a1", "#c5f0d1"]
+      },
+      "danger-red": {
+        "role": "tertiary",
+        "displayName": "警示紅 Danger Red",
+        "canonical": "#ff6b6e",
+        "tonalRamp": ["#330f10", "#591b1d", "#802a2c", "#a83c3f", "#d45254", "#ff6b6e", "#ff9a9c", "#ffc9ca"]
+      },
+      "night-bg": {
+        "role": "neutral",
+        "displayName": "夜幕 Night BG",
+        "canonical": "#0d1418",
+        "tonalRamp": ["#0d1418", "#172228", "#223038", "#32424c", "#4a5a64", "#71828c", "#9aa7b0", "#cfd8de"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Countdown Display", "purpose": "倒數分鐘數專用，tabular-nums 等寬。" },
+      "headline": { "displayName": "Card Headline", "purpose": "卡片標題（站點名稱）。" },
+      "body": { "displayName": "Body", "purpose": "內文、清單項、輸入框。" },
+      "label": { "displayName": "Label", "purpose": "狀態列、輔助說明、徽章。" }
+    },
+    "shadows": [
+      { "name": "soon-ring", "value": "0 0 0 1px #55d073", "purpose": "「即將到站」卡片的綠色光圈——訊號而非 elevation，受 One-Truck Rule 管轄。" }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "ease-out-quart，狀態回饋的預設曲線，150–250ms。" }
+    ],
+    "breakpoints": [
+      { "name": "content-max", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "每個畫面唯一主要動作；bureau-teal 膠囊 + teal-ink 字。",
+      "html": "<button class=\"ds-btn-primary\">加入站點</button>",
+      "css": ".ds-btn-primary { min-height: 44px; padding: 10px 20px; border: none; border-radius: 999px; background: #5fc4d4; color: #062026; font-size: 0.95rem; font-weight: 600; font-family: 'Noto Sans TC', system-ui, sans-serif; cursor: pointer; transition: background 0.2s cubic-bezier(0.25,1,0.5,1); } .ds-btn-primary:hover { background: #79d2e0; } .ds-btn-primary:active { background: #2e7688; color: #e8edf2; } .ds-btn-primary:focus-visible { outline: 2px solid #5fc4d4; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "次要動作（更新等）；透明底 + hairline 描邊。",
+      "html": "<button class=\"ds-btn-ghost\">更新</button>",
+      "css": ".ds-btn-ghost { min-height: 44px; padding: 6px 16px; border: 1px solid #9aa7b0; border-radius: 999px; background: transparent; color: #e8edf2; font-size: 0.85rem; font-family: 'Noto Sans TC', system-ui, sans-serif; cursor: pointer; transition: background 0.15s cubic-bezier(0.25,1,0.5,1); } .ds-btn-ghost:hover { background: rgba(255,255,255,0.04); } .ds-btn-ghost:active { background: rgba(255,255,255,0.06); } .ds-btn-ghost:focus-visible { outline: 2px solid #5fc4d4; outline-offset: 2px; }"
+    },
+    {
+      "name": "Stop Card (soon)",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "最愛站點卡片的「即將到站」狀態：綠描邊 + 綠光圈 + 倒數。",
+      "html": "<div class=\"ds-card ds-card-soon\"><h2 class=\"ds-card-title\">中華東路三段 336 巷口</h2><p class=\"ds-card-area\">東區・路線 22</p><div class=\"ds-countdown\"><strong>7</strong><span class=\"ds-mins\">分鐘</span></div></div>",
+      "css": ".ds-card { background: #172228; border: 1px solid transparent; border-radius: 12px; padding: 16px; color: #e8edf2; font-family: 'Noto Sans TC', system-ui, sans-serif; max-width: 320px; } .ds-card-soon { border-color: #55d073; box-shadow: 0 0 0 1px #55d073; } .ds-card-title { margin: 0; font-size: 1.1rem; font-weight: 600; line-height: 1.3; } .ds-card-area { margin: 4px 0 0; font-size: 0.8rem; color: #9aa7b0; } .ds-countdown { display: flex; align-items: baseline; gap: 10px; margin-top: 14px; } .ds-countdown strong { font-size: 2rem; font-weight: 700; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; } .ds-mins { color: #55d073; font-size: 1rem; font-weight: 600; }"
+    },
+    {
+      "name": "Recycle Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "徽章；資源回收日變體用綠色透明底。",
+      "html": "<span class=\"ds-chip\">週一・三・五</span> <span class=\"ds-chip ds-chip-recycle\">今日回收日</span>",
+      "css": ".ds-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; background: rgba(255,255,255,0.06); color: #e8edf2; font-family: 'Noto Sans TC', system-ui, sans-serif; } .ds-chip-recycle { background: rgba(85,208,115,0.16); color: #55d073; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "站點搜尋輸入框；focus 轉 bureau-teal 描邊。",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"輸入路名或站點\" />",
+      "css": ".ds-input { display: block; width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: #172228; color: #e8edf2; font-family: 'Noto Sans TC', system-ui, sans-serif; font-size: 0.95rem; } .ds-input::placeholder { color: #9aa7b0; } .ds-input:focus-visible { outline: none; border-color: #5fc4d4; box-shadow: 0 0 0 1px #5fc4d4; } .ds-input:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-active",
+      "description": "底部分頁列；當前分頁 bureau-teal（One-Truck Rule：不用黃）。",
+      "html": "<nav class=\"ds-tabbar\"><button class=\"ds-tab ds-tab-active\">追蹤</button><button class=\"ds-tab\">搜尋</button><button class=\"ds-tab\">地圖</button></nav>",
+      "css": ".ds-tabbar { display: flex; background: #172228; border-top: 1px solid rgba(255,255,255,0.08); max-width: 320px; } .ds-tab { flex: 1; min-height: 56px; border: none; background: transparent; color: #9aa7b0; font-size: 0.85rem; font-family: 'Noto Sans TC', system-ui, sans-serif; cursor: pointer; } .ds-tab:active { background: rgba(255,255,255,0.04); } .ds-tab-active { color: #5fc4d4; font-weight: 600; }"
+    },
+    {
+      "name": "Favorite Star",
+      "kind": "custom",
+      "refersTo": "chip",
+      "description": "標記最愛站點的星號（Lucide star）——綠色屬「我的車站」語意，One-Truck Rule 允許。",
+      "html": "<button class=\"ds-fav ds-fav-on\" aria-label=\"取消最愛\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/></svg></button><button class=\"ds-fav\" aria-label=\"加入最愛\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/></svg></button>",
+      "css": ".ds-fav { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; background: transparent; color: #9aa7b0; cursor: pointer; border-radius: 8px; } .ds-fav:active { background: rgba(255,255,255,0.06); } .ds-fav:focus-visible { outline: 2px solid #5fc4d4; outline-offset: 2px; } .ds-fav-on { color: #55d073; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "路燈下的環保局",
+    "overview": "ttracker 是在人行道上、天色暗下來之後被打開的 app。整個視覺系統為這個場景服務——深色底、超大倒數數字、單手可及的底部分頁列。配色向台南、台北、高雄三個環保局官網取經：三站共享色相約 200° 的機構 teal（台南 #2e7688、台北 #029996、高雄 #0b7f8e），ttracker 把它提亮後帶進夜間場景，承擔所有互動元素；「車」的訊號色來自實車——台南是全台唯一把垃圾車塗成綠色的縣市，truck-green #55d073 就是那台車的夜間提亮版，它不是裝飾色，它就是車。",
+    "keyCharacteristics": [
+      "日夜雙主題跟隨系統深淡色：夜間是「路燈下的環保局」，日間是官網的白晝公務色（day-bg #eef4f5 / day-teal #1e7286 / day-truck #20713c，全組合 ≥4.96:1）",
+      "機構 teal 承擔全部互動語彙；台南垃圾車綠是保留字",
+      "倒數數字是每個畫面的主角，其他一切退後",
+      "觸控目標一律 ≥44px，底部操作區避開 safe-area"
+    ],
+    "rules": [
+      { "name": "The One-Truck Rule", "body": "台南垃圾車綠只在「指涉那台車」時出現：倒數數字、即將到站的卡片光圈、標記站點的星、回收日徽章。按鈕、分頁、連結永遠是 teal。綠色一旦出現在畫面上，意思只有一個——跟車有關，而且多半是車要來了。", "section": "colors" },
+      { "name": "The Three-Bureau Rule", "body": "所有互動 affordance 共用同一個 teal（色相 ~200°），不得為不同元件另配藍、紫或其他冷色。truck-green（色相 ~140°）永遠不做互動色——teal 是「你可以按」，綠是「車的訊號」，兩者不得互換。", "section": "colors" },
+      { "name": "The Tabular Countdown Rule", "body": "倒數數字必須等寬（tabular-nums）。每秒更新的數字若寬度跳動，就是在跟使用者的餘光作對。", "section": "typography" },
+      { "name": "The Flat Night Rule", "body": "表面靜止時一律平坦。任何投影、光暈若不是在說「車要來了」，就是違規。", "section": "elevation" },
+      { "name": "The No-Emoji Rule", "body": "UI 的圖標語彙只有 Lucide 一套（ISC，24 格 2px 筆畫內嵌 SVG）。emoji 只允許出現在使用者輸入的內容裡，不出現在介面本身。", "section": "colors" }
+    ],
+    "dos": [
+      "Do 把所有互動元素統一在 bureau-teal (#5fc4d4) 上——按鈕、分頁、連結、焦點，一個聲音。",
+      "Do 保持倒數數字為畫面最大元素（2rem/700/tabular-nums），其他資訊退居 0.95rem 以下。",
+      "Do 維持觸控目標 ≥44px、分頁列 ≥56px，並永遠計入 env(safe-area-inset-bottom)。",
+      "Do 用色調分層（bg → surface → hairline）表達深度，靜止表面保持平坦。",
+      "Do 動效限於狀態回饋，150–250ms、ease-out；並為 prefers-reduced-motion 提供直接切換。"
+    ],
+    "donts": [
+      "Don't 把台南垃圾車綠用在任何與車無關的地方——不做按鈕底、不做分頁 active、不做裝飾、不做「成功」狀態色。綠色是保留字。",
+      "Don't 使用黃色的「垃圾車」意象——台南的垃圾車是綠色的（全台唯一），黃色垃圾車是別的縣市的記憶。",
+      "Don't 照搬三個官網的白底日間版式。取的是它們的機構色相，不是公告欄的排版。",
+      "Don't 在 teal 或綠色底上放灰字；前景一律用對應的 ink 色（teal-ink #062026 / green-ink #0d2a16）。",
+      "Don't 使用陰影堆疊、玻璃擬態、漸層文字，或 border-left 色條。",
+      "Don't 為載入畫面編排進場動畫；使用者要的是答案，不是開場秀。",
+      "Don't 顯示無憑據的倒數數字；資料缺席時誠實顯示「今日已收運完畢」或「無班次資料」。",
+      "Don't 在介面裡用 emoji 當圖標——圖標語彙只有 Lucide 一套（The No-Emoji Rule）。"
+    ]
+  }
+}
