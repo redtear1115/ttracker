@@ -84,6 +84,7 @@ main {
 .countdown strong { font-size: 2rem; font-weight: 700; letter-spacing: 0.02em; }
 .countdown .mins { color: var(--accent); font-size: 1rem; font-weight: 600; }
 .countdown.muted { color: var(--muted); font-size: 0.95rem; }
+.countdown .runicon { font-size: 1.2rem; }
 
 .badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
 .badge {
@@ -197,3 +198,45 @@ main {
 }
 .tabbar button.active { color: var(--accent); font-weight: 600; }
 .tabbar button:active { background: rgba(255, 255, 255, 0.04); }
+
+/* ---- bottom sheet ---- */
+.sheet {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom));
+  max-height: 45vh;
+  overflow-y: auto;
+  background: var(--card);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  z-index: 1000; /* Leaflet 地圖層之上 */
+}
+.sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.sheet-head h3 { margin: 0; font-size: 1rem; }
+.sheet-actions { display: flex; gap: 4px; }
+.ghost {
+  min-height: 44px; padding: 6px 12px;
+  border: none; background: transparent; color: var(--muted); font-size: 0.85rem;
+}
+.sheet-empty { padding: 16px 0; }
+.stoplist { list-style: none; margin: 8px 0 0; padding: 0; }
+.stoplist li { display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.stop-main {
+  flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0;
+  min-height: 44px; padding: 8px 0; border: none; background: transparent;
+  color: var(--text); text-align: left; font-size: 0.9rem;
+}
+.stop-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stop-main .muted { flex: none; font-size: 0.78rem; }
+.addplace { position: fixed; top: 12px; right: 12px; z-index: 1000; }
+.addform { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.addform input {
+  min-height: 44px; padding: 8px 12px; width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px;
+  background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.95rem;
+}
+.searchrow { display: flex; gap: 8px; }
+.searchrow input { flex: 1; }
+.hint { margin: 0; font-size: 0.8rem; }
+.place-icon { font-size: 24px; line-height: 1; background: none; border: none; }

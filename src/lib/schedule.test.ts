@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isoDay, nextArrival, minutesUntil, isRecycleDay } from './schedule'
+import { isoDay, nextArrival, minutesUntil, isRecycleDay, nextArrivalHasRecycle } from './schedule'
 
 // 2026-07-13 是週一
 const mon = (h: number, m: number) => new Date(2026, 6, 13, h, m)
@@ -51,5 +51,21 @@ describe('isRecycleDay', () => {
   it('今天在回收日清單', () => {
     expect(isRecycleDay([1, 4], mon(8, 0))).toBe(true)
     expect(isRecycleDay([2, 6], mon(8, 0))).toBe(false)
+  })
+})
+
+describe('nextArrivalHasRecycle', () => {
+  // mon(h, m) 已存在於檔案上方（2026-07-13 週一）
+  it('下一班當天是回收日 → true', () => {
+    expect(nextArrivalHasRecycle({ time: '19:30', workDays: [1, 4], recycleDays: [1, 4] }, mon(18, 0))).toBe(true)
+  })
+  it('下一班當天非回收日 → false', () => {
+    expect(nextArrivalHasRecycle({ time: '19:30', workDays: [1, 4], recycleDays: [2, 6] }, mon(18, 0))).toBe(false)
+  })
+  it('今天班次過了、下一班在週四且週四有回收 → true', () => {
+    expect(nextArrivalHasRecycle({ time: '19:30', workDays: [1, 4], recycleDays: [4] }, mon(20, 0))).toBe(true)
+  })
+  it('無班次 → null', () => {
+    expect(nextArrivalHasRecycle({ time: null, workDays: [1], recycleDays: [1] }, mon(12, 0))).toBeNull()
   })
 })
