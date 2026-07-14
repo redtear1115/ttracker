@@ -140,5 +140,4 @@
 <style>
   .map { position: fixed; inset: 0 0 56px 0; }
   .addplace { display: inline-flex; align-items: center; gap: 0.35em; }
-  :global(.marker-icon) { background: none; border: none; line-height: 0; }
 </style>
