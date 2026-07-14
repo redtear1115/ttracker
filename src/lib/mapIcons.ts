@@ -1,6 +1,8 @@
 // Raw SVG markup for Leaflet divIcon markers.
 // Icon paths from Lucide (https://lucide.dev), ISC License.
 
+import type { Availability } from './parking'
+
 const TRUCK_PATH =
   '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>'
 
@@ -38,3 +40,20 @@ export const homeMarkerHtml =
 
 // 32px map-pin，fill 深青、白邊、細一階描邊；針尖朝下對準座標
 export const draftMarkerHtml = svg(32, '#2e7688', '#ffffff', 1.5, MAP_PIN_PATH)
+
+// 停車 chip：帶剩餘數的圓標記。停車與垃圾車無關——
+// teal／danger／muted ＋白邊，禁用 truck-green（One-Truck Rule）
+function parkingChip(bg: string, label: string): string {
+  return (
+    `<div style="min-width:30px;height:30px;padding:0 5px;border-radius:999px;` +
+    `background:${bg};box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,0.35);` +
+    `display:flex;align-items:center;justify-content:center;color:#fff;` +
+    `font:700 12px/1 'Noto Sans TC',system-ui,sans-serif;box-sizing:border-box;">${label}</div>`
+  )
+}
+
+export function parkingMarkerHtml(a: Availability): string {
+  if (a.kind === 'open') return parkingChip('#2e7688', String(a.count)) // 淺色地圖磚專用深青
+  if (a.kind === 'full') return parkingChip('#b3372e', '滿')
+  return parkingChip('#52646e', '—')
+}
