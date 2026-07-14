@@ -10,7 +10,9 @@
   let el: HTMLDivElement
   let map: L.Map
   let lotLayer = L.layerGroup()
-  let selected = $state<ParkingLot | null>(null)
+  // 存 id 而非物件：60s 輪詢換新陣列後，面板跟著最新資料走（場次消失則自動關閉）
+  let selectedId = $state<string | null>(null)
+  const selected = $derived(parking.lots.find((l) => l.id === selectedId) ?? null)
 
   onMount(() => {
     map = L.map(el, { zoomControl: false })
@@ -42,7 +44,7 @@
         iconAnchor: [15, 15],
       })
       L.marker([lot.lat, lot.lng], { icon })
-        .on('click', () => (selected = lot))
+        .on('click', () => (selectedId = lot.id))
         .addTo(lotLayer)
     }
   })
@@ -68,7 +70,7 @@
     <header class="sheet-head">
       <h3 class="sheet-title"><Icon name="circle-parking" size={18} />{selected.name}</h3>
       <div class="sheet-actions">
-        <button class="ghost" onclick={() => (selected = null)} aria-label="關閉"><Icon name="x" size={18} /></button>
+        <button class="ghost" onclick={() => (selectedId = null)} aria-label="關閉"><Icon name="x" size={18} /></button>
       </div>
     </header>
     <p class="muted">{selected.zone}・{selected.address}</p>
