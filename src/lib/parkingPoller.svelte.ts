@@ -13,6 +13,7 @@ class ParkingPoller {
       const r = await fetch('/api/parking')
       if (!r.ok) throw new Error(String(r.status))
       const json = (await r.json()) as { lots: ParkingLot[] }
+      if (!Array.isArray(json.lots)) throw new Error('bad shape')
       this.lots = json.lots
       this.status = 'ok'
       this.lastFetched = new Date()

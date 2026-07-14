@@ -234,7 +234,7 @@ main {
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 500; /* Leaflet pane 之上、sheet 之下 */
+  z-index: 900; /* Leaflet popup pane（700）之上、sheet（1000）之下 */
   padding: 8px 16px;
   border-radius: 999px;
   background: var(--card);

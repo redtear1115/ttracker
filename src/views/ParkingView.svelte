@@ -22,13 +22,15 @@
     lotLayer.addTo(map)
     map.setView([22.99, 120.21], 14)
     // 情境是「到陣地前找車位」：有 GPS 就跳到人所在的位置
+    let gone = false // 定位 callback 最慢 5s 才回來，可能晚於 unmount
     navigator.geolocation?.getCurrentPosition(
-      (pos) => map.setView([pos.coords.latitude, pos.coords.longitude], 15),
+      (pos) => { if (!gone) map.setView([pos.coords.latitude, pos.coords.longitude], 15) },
       () => {},
       { maximumAge: 60_000, timeout: 5_000 },
     )
     parking.start()
     return () => {
+      gone = true
       parking.stop()
       map.remove()
     }
