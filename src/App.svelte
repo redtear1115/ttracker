@@ -4,7 +4,7 @@
   import { gps } from './lib/gpsPoller.svelte'
   import { onMount } from 'svelte'
 
-  let view = $state<'home' | 'search' | 'map'>('home')
+  let view = $state<'home' | 'search' | 'map' | 'parking'>('home')
   onMount(() => {
     gps.start()
     return () => gps.stop()
@@ -16,9 +16,13 @@
     <HomeView gotoSearch={() => (view = 'search')} />
   {:else if view === 'search'}
     <SearchView />
-  {:else}
+  {:else if view === 'map'}
     {#await import('./views/MapView.svelte') then { default: MapView }}
       <MapView />
+    {/await}
+  {:else}
+    {#await import('./views/ParkingView.svelte') then { default: ParkingView }}
+      <ParkingView />
     {/await}
   {/if}
 </main>
@@ -27,4 +31,5 @@
   <button class:active={view === 'home'} onclick={() => (view = 'home')}>最愛</button>
   <button class:active={view === 'search'} onclick={() => (view = 'search')}>搜尋</button>
   <button class:active={view === 'map'} onclick={() => (view = 'map')}>地圖</button>
+  <button class:active={view === 'parking'} onclick={() => (view = 'parking')}>停車</button>
 </nav>

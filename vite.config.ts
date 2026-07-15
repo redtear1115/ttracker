@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config'
 import type { Plugin } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { VitePWA } from 'vite-plugin-pwa'
+import { PARKING_UPSTREAM, slimParkingResponse } from './src/lib/parking.ts'
 
 const UPSTREAM = 'https://clean.tnepb.gov.tw/WebService/WsSkyeyes.asmx/NewgetCarsinfo'
 
@@ -33,10 +34,32 @@ function gpsDevProxy(): Plugin {
   }
 }
 
+// 開發期代理：停車場上游無 CORS，dev server 代打（正式環境由 functions/api/parking.ts 處理）
+function parkingDevProxy(): Plugin {
+  return {
+    name: 'parking-dev-proxy',
+    configureServer(server) {
+      server.middlewares.use('/api/parking', async (_req, res) => {
+        try {
+          const r = await fetch(PARKING_UPSTREAM)
+          if (!r.ok) throw new Error('bad upstream')
+          const lots = slimParkingResponse(await r.json())
+          res.setHeader('content-type', 'application/json; charset=utf-8')
+          res.end(JSON.stringify({ fetchedAt: new Date().toISOString(), lots }))
+        } catch {
+          res.statusCode = 502
+          res.end('{"error":"upstream"}')
+        }
+      })
+    },
+  }
+}
+
 export default defineConfig({
   plugins: [
     svelte(),
     gpsDevProxy(),
+    parkingDevProxy(),
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {

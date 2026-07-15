@@ -227,6 +227,24 @@ main {
 .tabbar button.active { color: var(--teal); font-weight: 600; }
 .tabbar button:active { background: var(--press); }
 
+/* ---- shared map marker / parking view ---- */
+.marker-icon { background: none; border: none; line-height: 0; }
+.parkbanner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900; /* Leaflet popup pane（700）之上、sheet（1000）之下 */
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.85rem;
+  border: 1px solid var(--hairline);
+}
+.parkcount { margin: 10px 0 4px; font-size: 1rem; }
+.parkcount strong { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
 /* ---- bottom sheet ---- */
 .sheet {
   position: fixed;

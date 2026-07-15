@@ -9,6 +9,7 @@
     | 'trash-2'
     | 'x'
     | 'plus'
+    | 'circle-parking'
 
   let { name, size = 16, filled = false }: {
     name: IconName
@@ -31,6 +32,8 @@
       '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
     plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    'circle-parking':
+      '<circle cx="12" cy="12" r="10"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>',
   }
 </script>
 
